@@ -1,0 +1,28 @@
+{
+  "name": "bplc-node-server",
+  "version": "1.0.0",
+  "description": "Server for the BowenPLC project",
+  "main": "index.js",
+  "scripts": {
+    "lint": "eslint --ext .js ./ --fix",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BowenPLC/bplc-node-server.git"
+  },
+  "author": "Alex Bowen <ajbowen249@gmail.com>",
+  "license": "GNU GPL",
+  "bugs": {
+    "url": "https://github.com/BowenPLC/bplc-node-server/issues"
+  },
+  "homepage": "https://github.com/BowenPLC/bplc-node-server#readme",
+  "dependencies": {
+    "body-parser": "1.18.2",
+    "express": "4.16.2",
+    "fs-extra": "5.0.0"
+  },
+  "devDependencies": {
+    "eslint": "4.13.1"
+  }
+}
