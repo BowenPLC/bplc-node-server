@@ -7,8 +7,10 @@ const fs = require('fs-extra');
 const types = require('./types');
 
 class BPLCServer {
-    constructor(coreGenerator, configPath, port) {
-        this.coreGenerator = coreGenerator;
+    constructor(core, configPath, port) {
+        types.verify(core, types.types.CoreV1);
+
+        this.core = core;
         this.configPath = configPath || constants.defaults.configPath;
         this.port = port || constants.defaults.port;
 
@@ -17,14 +19,12 @@ class BPLCServer {
 
     async init() {
         await this.readConfig();
-        this.core = this.coreGenerator(this.config);
-        types.verify(this.core, types.types.CoreV1);
 
         this.app = express();
         this.app.use(bodyParser.json({ limit: '100mb', }));
-        routes(this.app);
+        routes(this);
 
-        this.server = http.createServer(this);
+        this.server = http.createServer(this.app);
         this.server.listen(this.port);
     }
 
@@ -32,6 +32,7 @@ class BPLCServer {
         if (await fs.exists(this.configPath)) {
             const configContent = await fs.readFile(this.configPath);
             this.config = JSON.parse(configContent);
+            this.core.setConfig(this.config);
         } else {
             await this.writeConfig({});
         }
@@ -39,18 +40,20 @@ class BPLCServer {
 
     async writeConfig(config) {
         await fs.writeFile(this.configPath, JSON.stringify(config));
+        this.config = config;
+        this.core.setConfig(config);
     }
 
     getStatus() {
         return {
             status: {
-                core: this.core.status,
+                core: this.core.getStatus(),
                 server: { runningProgram: this.runningProgram, },
             },
         };
     }
 
-    async setIO(mod, type, index, state) {
+    async setIO(mod, index, state) {
         if (this.runningProgram) {
             return {
                 status: 412,
@@ -58,7 +61,7 @@ class BPLCServer {
             };
         }
 
-        return this.core.setIO(mod, type, index, state);
+        return await this.core.setIO(mod, index, state);
     }
 }
 

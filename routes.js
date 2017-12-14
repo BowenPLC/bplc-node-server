@@ -36,12 +36,12 @@ module.exports = function(server) {
         createJsonReponse(res, server.core.dump());
     });
 
-    app.post(`${basePath}/io/:module/:type/:index`, (req, res) => {
-        const err = server.setIO(req.params.module, req.params.type, req.params.index, req.body.state);
+    app.post(`${basePath}/io/:module/:index`, async(req, res) => {
+        const err = await server.setIO(req.params.module, req.params.index, req.body.state);
         if (err) {
             createJsonReponse(res, err.error, err.status);
         } else {
-            createJsonReponse();
+            createJsonReponse(res);
         }
     });
 };

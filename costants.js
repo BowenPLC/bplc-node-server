@@ -4,4 +4,10 @@ module.exports = {
         port: 8080,
     },
     version: { apiVersion: 1, },
+    io: {
+        modules: {
+            DigitalOutput: 'DigitalOutput',
+            StringOutput: 'StringOutput',
+        },
+    },
 };

@@ -3,7 +3,7 @@ function verify(object, template) {
         const type = typeof object[ key ];
         const expected = template[ key ];
         if (type !== expected) {
-            throw new Error(`Type error: missing or incorrect type ${type} for key ${key}: ${expected}`);
+            throw new Error(`Type error: missing or incorrect type "${type}" for key "${key}": "${expected}"`);
         }
     }
 }
@@ -11,8 +11,16 @@ function verify(object, template) {
 module.exports.verify = verify;
 module.exports.types = {
     CoreV1: {
-        status: 'object',
+        getStatus: 'function',
         setIO: 'function',
         dump: 'function',
+        setConfig: 'function',
     },
+    IOModuleV1: {
+        name: 'string',
+        implType: 'string',
+        moduleType: 'string',
+        get: 'function',
+        set: 'function',
+    }
 };

@@ -120,8 +120,6 @@ module.exports = {
     'space-unary-ops': 'warn',
     'spaced-comment': ['warn', 'always'],
     'wrap-regex': 'error',
-    'arrow-body-style': ['error', 'always'],
-    'arrow-parens': ['error', 'always'],
     'arrow-spacing': 'warn',
     'no-confusing-arrow': 'error',
     'no-const-assign': 'error',
