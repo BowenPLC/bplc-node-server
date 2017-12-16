@@ -5,9 +5,10 @@ const constants = require('./costants');
 const routes = require('./routes');
 const fs = require('fs-extra');
 const types = require('./types');
+const cors = require('cors');
 
 class BPLCServer {
-    constructor(core, configPath, port) {
+    constructor(core, port, configPath) {
         types.verify(core, types.types.CoreV1);
 
         this.core = core;
@@ -22,6 +23,7 @@ class BPLCServer {
 
         this.app = express();
         this.app.use(bodyParser.json({ limit: '100mb', }));
+        this.app.use(cors());
         routes(this);
 
         this.server = http.createServer(this.app);

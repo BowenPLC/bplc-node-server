@@ -7,6 +7,9 @@ function createJsonReponse(res, data, status) {
     status = status || 200;
 
     res.setHeader('Content-Type', 'application/json');
+    res.setHeader('Access-Control-Allow-Origin', '*');
+    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization');
+    res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
     res.status(status);
     res.send(`${JSON.stringify(data)}\n`);
 }
