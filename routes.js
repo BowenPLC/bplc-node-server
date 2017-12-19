@@ -35,8 +35,8 @@ module.exports = function(server) {
     // IO routes
     // IMPROVE: This is temporary. Need a way to get IO without
     //          interrupting critical timing.
-    app.get(`${basePath}/io/complete`, (req, res) => {
-        createJsonReponse(res, server.core.dump());
+    app.get(`${basePath}/io/complete`, async(req, res) => {
+        createJsonReponse(res, await server.core.dump());
     });
 
     app.post(`${basePath}/io/:module/:index`, async(req, res) => {
