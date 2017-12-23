@@ -6,6 +6,7 @@ const routes = require('./routes');
 const fs = require('fs-extra');
 const types = require('./types');
 const cors = require('cors');
+const path = require('path');
 
 class BPLCServer {
     constructor(core, port, configPath) {
@@ -72,26 +73,31 @@ class BPLCServer {
     }
 
     async runProgram(programName) {
-        if (this.runningProgram) {
-            return {
-                status: 412,
-                error: { message: 'Already running a program.', },
-            };
-        }
+        try {
+            if (this.runningProgram) {
+                return {
+                    status: 412,
+                    error: { message: 'Already running a program.', },
+                };
+            }
 
-        const fullPath = `${this.programsFolder}/${programName}.js`;
-        if (!await fs.exists(fullPath)) {
-            return {
-                status: 404,
-                error: { message: `Could not find program ${programName}`, },
-            };
-        }
+            const fullPath = path.resolve(`${this.programsFolder}/${programName}.js`);
+            if (!await fs.exists(fullPath)) {
+                return {
+                    status: 404,
+                    error: { message: `Could not find program ${programName}`, },
+                };
+            }
 
-        this.currentProgram = require(fullPath);
-        await this.currentProgram.init(this);
-        this.runningProgram = true;
-        this.currentProgram.start();
-        return undefined;
+            this.currentProgram = require(fullPath);
+
+            await this.currentProgram.init(this);
+            this.runningProgram = true;
+            this.currentProgram.start();
+            return undefined;
+        } catch (err) {
+            return err;
+        }
     }
 
     async stopProgram() {
@@ -103,6 +109,7 @@ class BPLCServer {
         }
 
         await this.currentProgram.stop();
+        this.runningProgram = false;
         return undefined;
     }
 

@@ -50,7 +50,7 @@ module.exports = function(server) {
 
     // Program Routes
     app.post(`${basePath}/programs/run`, async(req, res) => {
-        const err = await server.runProgram(req.params.programName);
+        const err = await server.runProgram(req.body.programName);
         if (err) {
             createJsonReponse(res, err.error, err.status);
         } else {
