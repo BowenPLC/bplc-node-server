@@ -47,4 +47,27 @@ module.exports = function(server) {
             createJsonReponse(res);
         }
     });
+
+    // Program Routes
+    app.post(`${basePath}/programs/run`, async(req, res) => {
+        const err = await server.runProgram(req.params.programName);
+        if (err) {
+            createJsonReponse(res, err.error, err.status);
+        } else {
+            createJsonReponse(res);
+        }
+    });
+
+    app.post(`${basePath}/programs/stop`, async(req, res) => {
+        const err = await server.stopProgram();
+        if (err) {
+            createJsonReponse(res, err.error, err.status);
+        } else {
+            createJsonReponse(res);
+        }
+    });
+
+    app.get(`${basePath}/programs`, async(req, res) => {
+        return createJsonReponse(res, await server.getPrograms());
+    });
 };

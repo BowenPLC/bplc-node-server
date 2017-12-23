@@ -16,6 +16,7 @@ class BPLCServer {
         this.port = port || constants.defaults.port;
 
         this.runningProgram = false;
+        this.programsFolder = constants.defaults.programsFolder;
     }
 
     async init() {
@@ -28,6 +29,10 @@ class BPLCServer {
 
         this.server = http.createServer(this.app);
         this.server.listen(this.port);
+
+        if (!await fs.exists(this.programsFolder)) {
+            await fs.mkdir(this.programsFolder);
+        }
     }
 
     async readConfig() {
@@ -64,6 +69,45 @@ class BPLCServer {
         }
 
         return await this.core.setIO(mod, index, state);
+    }
+
+    async runProgram(programName) {
+        if (this.runningProgram) {
+            return {
+                status: 412,
+                error: { message: 'Already running a program.', },
+            };
+        }
+
+        const fullPath = `${this.programsFolder}/${programName}.js`;
+        if (!await fs.exists(fullPath)) {
+            return {
+                status: 404,
+                error: { message: `Could not find program ${programName}`, },
+            };
+        }
+
+        this.currentProgram = require(fullPath);
+        await this.currentProgram.init(this);
+        this.runningProgram = true;
+        this.currentProgram.start();
+        return undefined;
+    }
+
+    async stopProgram() {
+        if (!this.runningProgram) {
+            return {
+                status: 412,
+                error: { message: 'No program is running.', },
+            };
+        }
+
+        await this.currentProgram.stop();
+        return undefined;
+    }
+
+    async getPrograms() {
+        return (await fs.readdir(this.programsFolder)).filter(x => x.endsWith('.js')).map(x => x.replace('.js', ''));
     }
 }
 
